@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from werkzeug.security import generate_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -17,7 +17,7 @@ class User(db.Model):
     username = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     phone = db.Column(db.String(120), nullable=False, unique=True)
-    profile_image = db.Column(db.String(120), nullable=False)
+    profile_image = db.Column(db.String(120), nullable=True)
     password = db.Column(db.String(120), nullable=False)
 
     # one to one relationship with account
@@ -27,7 +27,7 @@ class User(db.Model):
 class Account(db.Model):
     __tablename__ = "account"
     id = db.Column(db.Integer, primary_key=True)
-    followers = db.Column(db.Integer)
+    follower_count = db.Column(db.Integer)
     messages = db.Column(db.String(250))
 
     # foreign key to link to user
@@ -42,7 +42,7 @@ class Post(db.Model):
     links = db.Column(db.String(120))
     image = db.Column(
         db.String(250)
-    )  # Specify a suitable data type for the image column
+    ) 
     likes = db.Column(db.Integer)
     saves = db.Column(db.Integer)
     comments = db.Column(db.String(120))
@@ -52,7 +52,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     # relationship to access the user who created the post
-    user = db.relationship("User", backref="post")
+    user = db.relationship("User", backref="posts")
 
 
 # routes
